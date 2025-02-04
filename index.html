@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¿Quieres ser mi San Valentín?</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #edbcf7e5;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            background-color: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #f04dffe0;
+            margin-bottom: 2rem;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: 120px;
+        }
+
+        .btn-si {
+            background-color: #ff4d88;
+            color: white;
+        }
+
+        .btn-no {
+            background-color: #808080;
+            color: white;
+            white-space: normal;
+            max-width: 200px;
+        }
+
+        .hello-kitty {
+            width: 200px;
+            height: 200px;
+            margin-bottom: 2rem;
+        }
+
+        .flowers {
+            position: absolute;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="hello-kitty-drawing-hello-kitty.gif" alt="Hello Kitty" class="hello-kitty">
+        <h1>¿Quieres ser mi San Valentín? ❤️</h1>
+        <div class="buttons">
+            <button class="btn btn-si" onclick="aceptar()">Sí</button>
+            <button class="btn btn-no" onclick="preguntarNo()">No</button>
+        </div>
+    </div>
+
+    <!-- Audio de fondo -->
+    <audio id="backgroundMusic" preload="auto">
+        <source src="Ours.mp3" type="audio/mp3">
+        Tu navegador no soporta el elemento de audio.
+    </audio>
+
+    <script>
+        let tamañoSi = 1; // Tamaño inicial del botón "Sí"
+        let preguntas = [
+            "No",
+            "¿Estás segura?",
+            "¿Segurísima?",
+            "¿Piénsalo otra vez?",
+            "¿Reflexiona tu elección?",
+            "¿Ni por unos makis?",
+            "¿Y si te doy flores?",
+            "¿Última oportunidad?",
+            "¿De verdad?",
+            "¿Te estoy haciendo daño?",
+            "¿Qué he hecho mal?",
+            "¿Ya no te importo?",
+            "¿No te da curiosidad al menos?"
+        ];
+        let preguntaActual = 0; // Índice actual de las preguntas
+        const backgroundMusic = document.getElementById('backgroundMusic');
+        
+        // Configuración inicial del volumen
+        backgroundMusic.volume = 0.5;
+
+        function preguntarNo() {
+            const btnSi = document.querySelector('.btn-si');
+            const btnNo = document.querySelector('.btn-no');
+            
+            if (preguntaActual < preguntas.length) {
+                btnNo.textContent = preguntas[preguntaActual];
+                preguntaActual++;
+                
+                tamañoSi += 0.3; // Incrementa el tamaño del botón "Sí"
+                btnSi.style.transform = `scale(${tamañoSi})`;
+                btnNo.style.transform = `translateX(${(preguntaActual * 20)}px)`;
+                console.log(`Pregunta actual cambiada a "${preguntas[preguntaActual - 1]}"`);
+                
+                if (preguntaActual === preguntas.length) {
+                    console.log("Se han mostrado todas las preguntas.");
+                }
+                
+            } else {
+                preguntaActual = 0; // Reinicia las preguntas
+                console.log("Reiniciando preguntas.");
+                btnNo.textContent = "No";
+                btnSi.style.transform = `scale(1)`;
+                btnNo.style.transform = `translateX(0)`;
+            }
+        }
+
+        function aceptar() {
+            console.log("Botón 'Sí' presionado");
+            
+            // Asegúrate de que el audio no esté en mute
+            backgroundMusic.muted = false; 
+            
+            // Configura el audio en bucle y reproduce
+            backgroundMusic.loop = true;
+
+            backgroundMusic.play().then(() => {
+                console.log("Música reproducida correctamente.");
+                
+                // Cambia el contenido de la página
+                document.body.innerHTML = `
+                    <div class="container">
+                        <img src="hello-kitty-hello-kitty-dancing.gif" class="hello-kitty">
+                        <h1>¡Sabía que dirías que SÍ! ❤️</h1>
+                        <p style="font-size: 1.5rem; color: #ff4d88;">¡Te quiero mucho!</p>
+                    </div>
+                `;
+                crearFlores();
+                
+             }).catch(error => {
+                 console.error("Error reproduciendo música:", error);
+                 alert("Hubo un problema al reproducir la música. Por favor, revisa los permisos del navegador.");
+             });
+        }
+
+        function crearFlores() {
+            for (let i = 0; i < 50; i++) {
+                const flor = document.createElement('div');
+                flor.className = 'flowers';
+                flor.style.left = Math.random() * window.innerWidth + 'px';
+                flor.style.top = -20 + 'px';
+                flor.innerHTML = '🌹';
+                flor.style.fontSize = '24px';
+                document.body.appendChild(flor);
+                
+                animarFlor(flor);
+             }
+         }
+
+         function animarFlor(flor) {
+             let posY = -20; // Posición inicial
+             const velocidad = 1 + Math.random() * 2; // Velocidad aleatoria
+             
+             const moverFlor = () => {
+                 posY += velocidad; // Incrementa la posición Y
+                 flor.style.top = posY + 'px'; 
+                 
+                 if (posY < window.innerHeight) { 
+                     requestAnimationFrame(moverFlor); 
+                 } else { 
+                     flor.remove(); 
+                 }
+             };
+             requestAnimationFrame(moverFlor);
+         }
+    </script>
+</body>
+</html>
